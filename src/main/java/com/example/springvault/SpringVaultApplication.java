@@ -1,5 +1,10 @@
 package com.example.springvault;
 
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,12 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class SpringVaultApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(SpringVaultApplication.class, args);
-	}
-
-  @GetMapping("/hello")
-  public String hello(@RequestParam(value = "name", defaultValue = "World") String name) {
-    return String.format("Hello %s!", name);
+  public static void main(String[] args) {
+    SpringApplication.run(SpringVaultApplication.class, args);
   }
 }

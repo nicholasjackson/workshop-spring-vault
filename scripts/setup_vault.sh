@@ -38,3 +38,17 @@ function fetch_vault {
 if [ ! -f "./vault" ]; then
   fetch_vault
 fi
+
+# Run Vault
+nohup sh -c "./vault server -dev -dev-root-token-id=root" > vault.log &
+
+sleep 5
+
+export VAULT_ADDR=http://localhost:8200
+export VAULT_TOKEN=root
+
+# Enable transit secrets 
+./vault secrets enable transit
+
+# Create a key
+./vault write -f transit/keys/my-key

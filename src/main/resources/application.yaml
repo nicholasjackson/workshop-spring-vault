@@ -1,0 +1,10 @@
+spring:
+  jpa:
+    show_sql: true
+    hibernate:
+      ddl-auto: create-drop
+  datasource:
+    driverClassName: org.sqlite.JDBC
+    url: jdbc:sqlite:database.db
+    username: sa
+    password: sa

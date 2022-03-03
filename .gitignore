@@ -35,4 +35,8 @@ build/
 ### VS Code ###
 .vscode/
 
-./scripts/vault
+vault
+vault.log
+database.db
+bin
+nohup.out
