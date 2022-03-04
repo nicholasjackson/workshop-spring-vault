@@ -1,6 +1,5 @@
 package com.example.springvault;
 
-import com.example.springvault.hash.Hash;
 import com.example.springvault.model.User;
 import com.example.springvault.repositories.UserRepository;
 
@@ -19,8 +18,8 @@ class LoadDatabase {
   CommandLineRunner initDatabase(UserRepository repository) {
 
     return args -> {
-      log.info("Preloading " + repository.save(new User("Bilbo Baggins", Hash.MD5("burglar"))));
-      log.info("Preloading " + repository.save(new User("Frodo Baggins", Hash.MD5("thief"))));
+      log.info("Preloading " + repository.save(new User("Bilbo Baggins", "burgler")));
+      log.info("Preloading " + repository.save(new User("Frodo Baggins", "thief")));
     };
   }
 }

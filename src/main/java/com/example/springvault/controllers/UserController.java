@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import com.example.springvault.hash.Hash;
 import com.example.springvault.model.User;
 import com.example.springvault.repositories.UserRepository;
 
@@ -40,16 +39,14 @@ public class UserController {
   @PostMapping(path = "/user/{id}/password", consumes = MediaType.TEXT_PLAIN_VALUE)
   public void updatePassword(@PathVariable("id") long id, @RequestBody String password)
       throws NoSuchAlgorithmException {
-    log.info("Update password for id: " + id + " " + password);
+
+    log.info("Update password for id: " + id);
 
     // fetch the user
     Optional<User> user = userRepo.findById(id);
     if (user.isEmpty()) {
       throw new UserNotFoundException();
     }
-
-    String hashedPassword = Hash.MD5(password);
-    user.get().setPassword(hashedPassword);
 
     userRepo.save(user.get());
   }
