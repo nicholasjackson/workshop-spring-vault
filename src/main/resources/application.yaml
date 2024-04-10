@@ -8,3 +8,12 @@ spring:
     url: jdbc:sqlite:database.db
     username: sa
     password: sa
+  cloud:
+    vault:
+      host: localhost
+      scheme: http
+      port: 8200
+      fail-fast: true
+      authentication: APPROLE
+      app-role: 
+        role: spring-vault-example

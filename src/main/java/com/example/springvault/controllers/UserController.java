@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.example.springvault.hash.Vault;
 import com.example.springvault.model.User;
 import com.example.springvault.repositories.UserRepository;
 
@@ -47,6 +48,8 @@ public class UserController {
     if (user.isEmpty()) {
       throw new UserNotFoundException();
     }
+
+    user.get().setPassword(Vault.HCMAC(password));
 
     userRepo.save(user.get());
   }
