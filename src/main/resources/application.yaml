@@ -2,12 +2,15 @@ spring:
   jpa:
     show_sql: true
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
   datasource:
-    driverClassName: org.sqlite.JDBC
-    url: jdbc:sqlite:database.db
-    username: sa
-    password: sa
+    driverClassName: org.postgres.JDBC
+    url: jdbc:postgresql://postgres.container.local.jmpd.in:5432/payments
+    username: postgres
+    password: password
   cloud:
     vault:
       host: localhost

@@ -1,12 +1,12 @@
 plugins {
-	id 'org.springframework.boot' version '2.6.3'
-	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'org.springframework.boot' version '3.2.5'
+	id 'io.spring.dependency-management' version '1.1.5'
 	id 'java'
 }
 
 group = 'com.example'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
+sourceCompatibility = '17'
 
 repositories {
 	mavenCentral()
@@ -14,12 +14,12 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-  implementation 'org.springframework.boot:spring-boot-starter-data-rest:2.6.4'
-  implementation 'org.springframework.boot:spring-boot-starter-data-jpa:2.6.4'
+  implementation 'org.springframework.boot:spring-boot-starter-data-rest:3.2.5'
+  implementation 'org.springframework.boot:spring-boot-starter-data-jpa:3.2.5'
 
-  implementation 'org.xerial:sqlite-jdbc:3.36.0.3'
-  implementation 'com.zsoltfabok:sqlite-dialect:1.0'
-  implementation 'org.springframework.cloud:spring-cloud-vault-config:3.1.0'
+  implementation 'org.postgresql:postgresql'
+  implementation group: 'javax.persistence', name: 'javax.persistence-api', version: '2.2'
+  implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-vault-config', version: '4.1.1'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
