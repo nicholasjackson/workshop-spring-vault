@@ -1,0 +1,78 @@
+# Integrating Transit Secrets Engine with Spring Boot
+
+In the previous section you learned how to encrypt and decrypt data using Vault's Transit Secrets Engine. In this section you will learn how to integrate this into your Spring Boot application.
+
+Create a new class in the `entity` package called `PaymentCardListener`. This class will listen for events when a new payment card is created. Add the following code to the class:
+
+```java
+package com.example.springvault.entity;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class PaymentCardListener {
+  private static final Logger log = LoggerFactory.getLogger(PaymentCardListener.class);
+}
+```
+
+This defines the base class, now let's see how you inject a Vault client into the class.
+
+## Adding the Vault Client
+
+Using Springs dependency injection, you can inject the Vault client into the class. Add the following code to the `PaymentCardListener` class.  When an instance of this class is created Spring will automatically
+inject a `VaultTemplate` instance into the class. The `VaultTemplate` class is a high-level abstraction for interacting with Vault.
+
+```java
+@Autowired
+private VaultTemplate vault;
+```
+
+## Encrypting Data on save
+
+Now let's add a method that will encrypt the card number before saving it to the database. 
+
+The VaultTemplate class provides a method called `opsForTransit` that allows you to interact with the Transit Secrets Engine. You can use this method to encrypt and decrypt data. The method requires a single parameter that is the path to the Transit Secrets Engine. The reason you need to specify the path is that Vault allows you to multiple Transit Secrets Engines
+mounted at different paths.
+
+```java
+VaultTransitOperations transitOperations = vault.opsForTransit("transit");
+```
+
+Once you have an instance of the `VaultTransitOperations` class you can use the `encrypt` method to encrypt the data. The `encrypt` method requires two parameters, the first is the name of the encryption key and the second is the plaintext data that you want to encrypt.
+
+```java
+Ciphertext ciphertext = transitOperations.encrypt("payments", Plaintext.of(ref.getNumber()));
+```
+
+Finally, you can set the encrypted data on the entity before saving it to the database.
+
+```java
+ref.setNumber(ciphertext.getCiphertext());
+```
+
+The full method should look like this:
+
+```java
+@PrePersist
+@PreUpdate
+public void encryptDataBeforeSave(final PaymentCard ref) {
+  // encrypt the card number
+  VaultTransitOperations transitOperations = vault.opsForTransit("transit");
+  Ciphertext ciphertext = transitOperations.encrypt("payments", Plaintext.of(ref.getNumber()));
+
+  ref.setNumber(ciphertext.getCiphertext());
+}
+```
+
+Add this to your class and we can then wire this up to the entity.
+
+## Wiring up the Listener
+
+To add the listener to the entity you need to add the `@EntityListeners` annotation to the `PaymentCard` class. This annotation takes a single parameter that is an array of classes that are the listeners.
+
+Add this to the `PaymentCard` class and you can test the system.
+
+```java
+@EntityListeners(PaymentCardListener.class)
+```
+

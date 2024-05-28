@@ -4,6 +4,14 @@ resource "chapter" "database_secrets" {
   tasks = {}
 
   page "introduction" {
-    content = file("docs/database_secrets/index.mdx")
+    content = template_file("./database_secrets/1_index.mdx", {db_address = variable.db_address})
+  }
+  
+  page "configuring_spring" {
+    content = template_file("./database_secrets/2_integrating_with_spring.mdx", {db_address = variable.db_address})
+  }
+  
+  page "testing" {
+    content = template_file("./database_secrets/3_testing.mdx", {db_address = variable.db_address})
   }
 }

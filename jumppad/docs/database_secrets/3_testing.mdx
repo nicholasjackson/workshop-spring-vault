@@ -1,0 +1,45 @@
+# Testing the application
+
+Now that everything is configured, let's run the application locally and see if it can connect to the database.
+
+Run the following URL to start the application:
+
+```shell
+./gradlew bootRun
+```
+
+All being well you will not see any errors and the spring boot application will start.
+Let's test the application by inserting a record into the `payments` table.
+
+Run the following command in the terminal:
+
+```shell 
+curl localhost:8080/paymentcard  -H "content-type: application/json" \
+  -d '{
+        "user_id": 123, 
+        "name": "Mr Nicholas Jackson", 
+        "number": "12313434", 
+        "expiry":"01/23", 
+        "cv3": "1231"
+      }'
+```
+
+You should see the record ID returned in the response.
+
+## Checking the data
+
+Let's now check the data in the database to see if the record was inserted.
+
+First you need to get some access credentials, you can do this you can do this by running the following command:
+
+```shell
+vault read database/creds/reader
+```
+
+Then you can use the credentials to connect to the database:
+
+```shell
+psql -h postgres.container.local.jmpd.in -U <username> payments
+```
+
+When prompted enter your password.

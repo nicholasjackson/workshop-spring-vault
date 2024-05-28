@@ -1,0 +1,78 @@
+# Testing the application
+
+Let's deploy your application to Kubernetes.
+
+Run the following command in your termainal to deploy the application:
+
+```bash
+kubectl apply -f ./k8s/app.yaml
+```
+
+Assuming all went well you should see the following output when you
+run `kubectl get pods`:
+
+```bash
+NAME                                    READY   STATUS    RESTARTS   AGE
+vault-agent-injector-7d45d84c9d-9bg6b   1/1     Running   0          3h5m
+vault-0                                 1/1     Running   0          3h5m
+payments-5b859f9556-4wz78               1/1     Running   0          111m
+```
+
+## Curl the application endpoint
+
+Let's test that the application is working correctly by submitting a new payment card.
+
+```shell
+curl localhost:8081/paymentcard  -H "content-type: application/json" \
+  -d '{
+        "user_id": 123, 
+        "name": "Mr Nicholas Jackson", 
+        "number": "12313434", 
+        "expiry":"01/23", 
+        "cv3": "1231"
+      }'
+```
+
+You should see the record ID returned in the response.
+
+## Checking the data
+
+Let's now check the data in the database to see if the record was inserted.
+
+First you need to get some access credentials, you can do this you can do this by running the following command:
+
+```shell
+vault read database/creds/reader
+```
+
+Then you can use the credentials to connect to the database:
+
+```shell
+psql -h postgres.container.local.jmpd.in -U <username> payments
+```
+
+When prompted enter your password.
+
+Once you have authenticated you can again query the payments_card table to see the record you just inserted.
+
+```shell
+select * from payment_card;
+```
+
+You will see that the card number has been encrypted, this is because the `encryptDataBeforeSave` method was called before the record was saved to the database.
+
+```shell
+ id | user_id |        name         |                          number                           | expiry | cv3  
+----+---------+---------------------+-----------------------------------------------------------+--------+------
+  1 |     123 | Mr Nicholas Jackson | vault:v1:YeLEwWM0ojHqWRXvo0UVr/8PGCrLwqJWgZCvAtMU5rEgyrqA | 01/23  | 1231
+(1 row)
+
+payments=> 
+```
+
+## Summary
+
+Congratulations, you have successfully deployed an application to Kubernetes that interacts with Vault to secure sensitive data. You have also tested the application to ensure that it is working correctly.
+
+That is all for this workshop, feel free to explore some other features of Vault
+and try to implement them into your application.

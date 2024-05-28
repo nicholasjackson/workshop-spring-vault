@@ -5,6 +5,7 @@ resource "container" "postgres" {
 
   network {
     id = resource.network.local.meta.id
+    ip_address = variable.db_address
   }
 
   port {

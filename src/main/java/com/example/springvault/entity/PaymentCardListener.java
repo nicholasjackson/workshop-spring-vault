@@ -1,7 +1,4 @@
-package com.example.springvault.model;
-
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
+package com.example.springvault.entity;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +7,9 @@ import org.springframework.vault.core.VaultTemplate;
 import org.springframework.vault.core.VaultTransitOperations;
 import org.springframework.vault.support.Ciphertext;
 import org.springframework.vault.support.Plaintext;
+
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 
 public class PaymentCardListener {
   private static final Logger log = LoggerFactory.getLogger(PaymentCardListener.class);
@@ -22,7 +22,7 @@ public class PaymentCardListener {
   public void encryptDataBeforeSave(final PaymentCard ref) {
     // encrypt the card number
     VaultTransitOperations transitOperations = operations.opsForTransit("transit");
-    Ciphertext ciphertext = transitOperations.encrypt("my-encryption-key", Plaintext.of(ref.getNumber()));
+    Ciphertext ciphertext = transitOperations.encrypt("payments", Plaintext.of(ref.getNumber()));
 
     ref.setNumber(ciphertext.getCiphertext());
   }

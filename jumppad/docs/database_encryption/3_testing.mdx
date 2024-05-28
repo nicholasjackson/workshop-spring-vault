@@ -1,0 +1,66 @@
+# Testing the application
+
+Now that everything is configured, let's run the application locally and see how you can encrypt
+the credit card number when submitting a new payment card.
+
+Run the following URL to start the application:
+
+```shell
+./gradlew bootRun
+```
+
+```shell
+curl localhost:8080/paymentcard  -H "content-type: application/json" \
+  -d '{
+        "user_id": 123, 
+        "name": "Mr Nicholas Jackson", 
+        "number": "12313434", 
+        "expiry":"01/23", 
+        "cv3": "1231"
+      }'
+```
+
+You should see the record ID returned in the response.
+
+## Checking the data
+
+Let's now check the data in the database to see if the record was inserted.
+
+First you need to get some access credentials, you can do this you can do this by running the following command:
+
+```shell
+vault read database/creds/reader
+```
+
+Then you can use the credentials to connect to the database:
+
+```shell
+psql -h postgres.container.local.jmpd.in -U <username> payments
+```
+
+When prompted enter your password.
+
+Once you have authenticated you can again query the payments_card table to see the record you just inserted.
+
+```shell
+select * from payment_card;
+```
+
+You will see that the card number has been encrypted, this is because the `encryptDataBeforeSave` method was called before the record was saved to the database.
+
+```shell
+ id | user_id |        name         |                          number                           | expiry | cv3  
+----+---------+---------------------+-----------------------------------------------------------+--------+------
+  1 |     123 | Mr Nicholas Jackson | vault:v1:YeLEwWM0ojHqWRXvo0UVr/8PGCrLwqJWgZCvAtMU5rEgyrqA | 01/23  | 1231
+(1 row)
+
+payments=> 
+```
+
+Why not try manually decrypting the card number using the `vault` CLI tool? You can use the `transit/decrypt/payments` endpoint to decrypt the card number.
+
+## Summary
+
+In this section you learned how to integrate Vaults Transit Secrets engine into your Spring Boot application. You learned how to encrypt the credit card number before saving it to the database. You also learned how to decrypt the card number using the `vault` CLI tool. In the next section you will learn how to secure the Vault client configuration. 
+
+Next let's see how you can run this on Kubernetes.

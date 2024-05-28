@@ -79,15 +79,15 @@ resource "ingress" "vault_http" {
   }
 }
 
-resource "ingress" "ollama" {
-  port = 11434
+resource "ingress" "payments" {
+  port = 8081
 
   target {
     resource = resource.k8s_cluster.k3s
-    port     = 11434
+    port     = 8081
 
     config = {
-      service   = "ollama"
+      service   = "payments"
       namespace = "default"
     }
   }

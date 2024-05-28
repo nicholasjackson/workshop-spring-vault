@@ -1,3 +1,11 @@
+logging:
+  level:
+    root: INFO
+    org:
+      springframework:
+        vault:
+          core:
+            env: DEBUG
 spring:
   jpa:
     show_sql: true
@@ -7,16 +15,21 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
   datasource:
-    driverClassName: org.postgres.JDBC
+    driverClassName: org.postgresql.Driver
     url: jdbc:postgresql://postgres.container.local.jmpd.in:5432/payments
-    username: postgres
-    password: password
-  cloud:
-    vault:
-      host: localhost
-      scheme: http
-      port: 8200
-      fail-fast: true
-      authentication: APPROLE
-      app-role: 
-        role: spring-vault-example
+spring.cloud.vault:
+  host: localhost
+  scheme: http
+  port: 8200
+  fail-fast: true
+  authentication: TOKEN
+  token: ${VAULT_TOKEN}
+  kv:
+    enabled: false
+  database:
+    enabled: true
+    role: writer
+    backend: database
+    username-property: spring.datasource.username
+    password-property: spring.datasource.password
+spring.config.import: vault://

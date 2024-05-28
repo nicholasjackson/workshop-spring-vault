@@ -1,22 +1,21 @@
-package com.example.springvault.model;
+package com.example.springvault.entity;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
 
 @Entity
-@Table(name = "user")
 public class User implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
   public User() {
+    super();
   }
 
   public User(String name, String password) {

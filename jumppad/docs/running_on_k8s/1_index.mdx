@@ -1,0 +1,82 @@
+# Configuring Vault
+
+In previous exercises you have been interacting with Vault using an admin token.
+When running on a Kubernetes cluster you need to ensuret that the application
+has been configured with the correct permissions to interact with Vault.
+
+To secure access to it's API Vault uses a system of policies and roles. Policies
+define what paths a token can access and what operations can be performed on those
+paths. Roles define what policies are associated with an authentication endpoint.
+
+Previously you authenticated with an existing token, this capability is not
+practical in a production environment as it would require long lived tokens
+to be deployed with each deployment.  To address this Vault provides the concept
+of authentication endpoints.  These are endpoints that can be used to authenticate
+to Vault using a known secret such as a Kubernetes service account token, a GitHub
+token or a username and password.
+
+The authentication method for Kubernetes has already been configured for your
+cluster.  For your information the command looks like this:
+
+```bash
+vault write auth/kubernetes/config \
+  token_reviewer_jwt=<service account token> \
+  kubernetes_host="https://kubernetes.default.svc:443" \
+  kubernetes_ca_cert=<kubernetes ca cert>
+```
+
+Besides checking that the service account token has been correctly signed, 
+Vault uses the Kubernetes API to validate that the presented service account token 
+is valid.  For this reason the `kubernetes_host` and `kubernetes_ca_cert` are required
+when configuring the Kubernetes authentication method.
+
+## Controlling access to Vault using Policy
+
+Policies are used to control access to Vault.  A policy is a HCL file that defines
+the paths that a token can access and the operations that can be performed on those
+paths.  For example the following policy allows access to create a dynamic 
+database credential using the `writer` role and to encrypt data using the transit engine.
+
+```javascript
+path "database/creds/writer" {
+  capabilities = ["read", "create"]
+}
+
+path "transit/encrypt/payments" {
+  capabilities = ["create"]
+}
+```
+
+Let's add this policy to the Vault server. Run the following command in your
+terminal to create a policy called `payments`:
+
+```bash
+vault policy write payments - <<EOF
+path "database/creds/writer" {
+  capabilities = ["read", "create"]
+}
+
+path "transit/encrypt/payments" {
+  capabilities = ["create"]
+}
+EOF
+```
+
+## Creating Roles to associate Policies with Kubernetes Service Accounts 
+
+Once you have defined the policies that you want to use you need to create a role
+that associates the policy with a Kubernetes service account.  The following command
+creates a role called `payments` that associates the `payments` policy with the
+`payments` service account in the `default` namespace.
+
+```bash
+vault write auth/kubernetes/role/payments \
+  bound_service_account_names=payments-auth \
+  bound_service_account_namespaces=default \
+  token_policies=runtime
+  ttl=24h
+```
+
+Now everything has been configured, let's create a new Kubernetes deployment
+that uses the `payments` service account to authenticate to Vault and runs
+the application.

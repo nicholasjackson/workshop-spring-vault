@@ -1,32 +1,29 @@
-package com.example.springvault.model;
+package com.example.springvault.entity;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-@Entity
 @EntityListeners(PaymentCardListener.class)
-@Table(name = "paymentcard")
+@Entity
 public class PaymentCard implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
   public PaymentCard() {
+    super();
   }
 
   @Id
   @Column(name = "id")
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "id_Sequence")
-  @SequenceGenerator(name = "id_Sequence", sequenceName = "ID_SEQ")
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
   @Column(name = "user_id")
