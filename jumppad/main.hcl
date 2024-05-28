@@ -7,15 +7,15 @@ variable "install_vault" {
 }
 
 variable "db_address" {
-  default = "10.6.0.180"
-}
-
-resource "network" "local" {
-  subnet = "10.6.0.0/16"
+  default = "10.100.0.180"
 }
 
 variable "registry_ip_address" {
-  default = "10.6.0.183"
+  default = "10.100.0.183"
+}
+
+resource "network" "local" {
+  subnet = "10.100.0.0/16"
 }
 
 module "docs" {

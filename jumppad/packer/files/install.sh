@@ -52,5 +52,5 @@ git clone https://github.com/nicholasjackson/workshop-spring-vault.git ./worksho
 
 # Run jumppad to cache the images
 pushd /root/workshop
-sudo jumppad up --non-interactive
+sudo jumppad up --non-interactive ./jumppad
 sudo jumppad down --force
