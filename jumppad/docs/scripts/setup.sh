@@ -7,7 +7,7 @@ vault secrets enable database
 vault write database/config/payments \
     plugin_name=postgresql-database-plugin \
     allowed_roles=writer,reader \
-    connection_url="postgresql://{{username}}:{{password}}@10.6.0.180:5432/payments?sslmode=disable" \
+    connection_url="postgresql://{{username}}:{{password}}@10.100.0.180:5432/payments?sslmode=disable" \
     username="postgres" \
     password="password"
 
