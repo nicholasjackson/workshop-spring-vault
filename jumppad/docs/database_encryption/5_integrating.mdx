@@ -1,0 +1,23 @@
+# Integrating Transit Secrets Engine with Spring Boot
+
+In the previous section you learned how to encrypt and decrypt data using Vault's Transit Secrets Engine. In this section you will learn how to integrate this into your Spring Boot application.
+
+### Create a new class in the `entity` package called `PaymentCardListener`
+
+This class will listen for events when a new payment card is created. 
+
+<p>
+<details>
+  <summary style=\{{ fontSize: '18px', color: 'rgb(84, 128, 178)', fontWeight: 'medium' }} >Solution: src/main/java/com/example/springvault/entity/PaymentCardListener.java</summary>
+
+```java
+package com.example.springvault.entity;
+
+public class PaymentCardListener {
+}
+```
+
+</details>
+</p>
+
+This defines the base class, now let's see how you inject a Vault client into the class.

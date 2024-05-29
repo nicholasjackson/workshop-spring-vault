@@ -1,0 +1,45 @@
+# Decrypting data
+
+To decrypt the data, you can use the `decrypt` endpoint, this is very similar
+to the `encrypt` endpoint but you pass a `ciphertext` property instead of the `plaintext`
+property when encrypting.
+
+The returned data from the `decyrpt` endpoint is base64 encoded, to see the original
+value you will need to decode it.
+
+### Using the ciphertext you have just created, execute a command to decrypt the data
+
+You should see the original credit card number:
+
+```shell
+1234-5678-9012-3456
+```
+
+Did you manage that? If not you can find the solution below.
+
+<p>
+<details>
+  <summary style=\{{ fontSize: '18px', color: 'rgb(84, 128, 178)', fontWeight: 'medium' }} >Solution: command</summary>
+
+```shell
+vault write transit/decrypt/payments ciphertext=<ciphertext>
+```
+
+The output will be the decrypted value.
+
+```shell
+Key          Value
+---          -----
+plaintext    MTIzNC01Njc4LTkwMTItMzQ1Ngo=
+```
+
+You can then decode the base64 encoded value to get the original value.
+
+```shell
+echo <plaintext> | base64 --decode
+```
+
+</details>
+</p>
+
+In this section you learned how to encrypt and decrypt data using Vault's Transit Secrets Engine. In the next section you will learn how to integrate this into your Spring Boot application.

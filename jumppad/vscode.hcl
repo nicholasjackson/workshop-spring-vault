@@ -1,5 +1,5 @@
 resource "template" "bashrc" {
-  
+
   source = <<-EOF
   export PATH="$${PATH}:/opt/java/bin:/usr/local/bin/gradle/gradle-8.7/bin"
   export JAVA_HOME="/opt/java"
@@ -88,7 +88,7 @@ resource "template" "boot_config" {
       password-property: spring.datasource.password
   spring.config.import: vault://
   EOF
-  
+
   destination = "${data("vscode")}/application.yaml"
 }
 
@@ -106,7 +106,7 @@ resource "container" "vscode" {
     source      = "./working"
     destination = "/usr/src"
   }
-  
+
   volume {
     source      = resource.template.boot_config.destination
     destination = "/usr/src/src/main/resources/application.yaml"
@@ -131,19 +131,19 @@ resource "container" "vscode" {
     source      = resource.k8s_cluster.k3s.kube_config.path
     destination = "/root/.kube/config"
   }
-  
+
   volume {
     source      = resource.template.bashrc.destination
     destination = "/root/.bashrc"
   }
 
   environment = {
-    KUBE_CONFIG_PATH  = "/root/.kube/config"
-    KUBECONFIG        = "/root/.kube/config"
-    DEFAULT_FOLDER    = "/usr/src"
-    LC_ALL            = "C"
-    VAULT_ADDR        = "http://${resource.ingress.vault_http.local_address}"
-    VAULT_TOKEN       = resource.exec.vault_init.output.vault_token
+    KUBE_CONFIG_PATH = "/root/.kube/config"
+    KUBECONFIG       = "/root/.kube/config"
+    DEFAULT_FOLDER   = "/usr/src"
+    LC_ALL           = "C"
+    VAULT_ADDR       = "http://${resource.ingress.vault_http.local_address}"
+    VAULT_TOKEN      = resource.exec.vault_init.output.vault_token
   }
 
   // vscode

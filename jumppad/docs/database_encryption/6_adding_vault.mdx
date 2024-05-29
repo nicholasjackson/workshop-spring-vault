@@ -1,0 +1,33 @@
+# Injecting the Vault Client
+
+Using Springs dependency injection, you can inject the Vault client into the class. 
+Add the following code to the `PaymentCardListener` class.  When an instance of 
+this class is created Spring will automatically inject a `VaultTemplate` instance 
+into the class. The `VaultTemplate` class is a high-level abstraction for interacting with Vault.
+
+### Add the following code to the class you just created to inject a vault client
+
+```java
+@Autowired
+private VaultTemplate vault;
+```
+
+<p>
+<details>
+  <summary style=\{{ fontSize: '18px', color: 'rgb(84, 128, 178)', fontWeight: 'medium' }} >Solution: src/main/java/com/example/springvault/entity/PaymentCardListener.java</summary>
+
+```java
+package com.example.springvault.entity;
+
+public class PaymentCardListener {
+
+  @Autowired
+  private VaultTemplate vault;
+
+}
+```
+
+</details>
+</p>
+
+Next let's add a method that will encrypt the data before an entity is saved.

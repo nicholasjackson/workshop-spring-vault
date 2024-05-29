@@ -1,12 +1,12 @@
 resource "k8s_cluster" "k3s" {
-  config {
-    docker {
-      no_proxy = [
-        resource.container.registry.container_name,
-        "auth-registry.demo.gs"
-      ]
-    }
-  }
+  //config {
+  //  docker {
+  //    no_proxy = [
+  //      resource.container.registry.container_name,
+  //      "auth-registry.demo.gs"
+  //    ]
+  //  }
+  //}
 
   network {
     id = resource.network.local.meta.id

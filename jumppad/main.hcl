@@ -22,7 +22,10 @@ module "docs" {
   source = "./docs"
 
   variables = {
-    network = resource.network.local.meta.id
-    db_address = resource.container.postgres.network.0.ip_address
+    vscode      = resource.container.vscode.meta.id
+    network     = resource.network.local.meta.id
+    db_address  = resource.container.postgres.network.0.ip_address
+    vault_token = resource.exec.vault_init.output.vault_token
+    vault_addr  = docker_ip()
   }
 }

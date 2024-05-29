@@ -1,120 +1,15 @@
-# Configuring Database Secrets
+# Database Secrets Engine
 
 Every engine in Vault has to be enabled and configured, and the database engine is no different. The database engine is used to generate dynamic credentials for databases, and it can be configured to generate credentials for a variety of databases. This guide will walk you through configuring the database engine and generating dynamic credentials for a PostgreSQL database.
 
 ## Enable the Database Engine
 
-All secrets engines must be enabled at a particular path before they can be used. This is usually a one-time operation. You enable the database engine with the `vault secrets enable` command.
+All secrets engines must be enabled at a particular path before they can be used. This is usually a one-time operation. You enable the database engine with the `vault secrets enable <type>` command.
 
-Let's enable the database engine for PostgreSQL, run the following script in the terminal:
+### Run the following command in your terminal
 
 ```shell
 vault secrets enable database
 ```
 
-## Configure the Database Connection
-
-Once an engine has been enabled at a given path, you can configure it. The configuration options will vary depending on the type of secrets engine. The database secrets engine requires connection information to the database.
-
-There are many different databases that are supported by Vault [database secrets engine](https://www.vaultproject.io/docs/secrets/databases/index.html). When configuring the database secrets engine, you need to specify the plugin name, the connection URL, and the allowed roles.
-
-We will configure the database secrets engine for a PostgreSQL database. The connection URL should be in the format:
- 
-```
-postgresql://\{{username}}:\{{password}}@hostname:port/database_name?sslmode=disable
-```
-
-`username` and `password` are template variables, the actual username and password are passed as parameters.
-
-Once you have configured the username and password in Vault it is not possible to read this configuration and retrieve them. They are only used internally when generating dynamic credentials. 
-
-Run the following command in the terminal to configure the database connection:
-
-```shell
-vault write database/config/payments \
-    plugin_name=postgresql-database-plugin \
-    allowed_roles=writer,reader \
-    connection_url="postgresql://\{{username}}:\{{password}}@{{db_address}}:5432/payments?sslmode=disable" \
-    username="postgres" \
-    password="password"
-```
-
-## Rotating the Root Database Credentials
-
-To configure Vault we had to provide the root database credentials. Regardless of how you obtained these credentisls, it is a good practice to rotate them to ensure that they do not leak. Vault can automaticall rotate the credentials for you without you needing to configure the secrets engine again.
-
-```shell
-vault write -force database/rotate-root/payments
-```
-
-## Creating roles
-
-A role configures the permissions for the database user. When you create a role, you can specify the SQL statements that are executed to create the user and grant permissions. You can also specify the TTL for the credentials.
-
-The following role allows the user to insert records into the `payments` table, it does not provide permissions to create tables or drop tables or even to select records. Having correctly scoped permissions for a user is a fundamental security practice.
-
-Run the following command to create the `writer` role:
-
-```shell
-vault write database/roles/writer \
-    db_name=payments \
-    creation_statements="CREATE ROLE \"\{{name}}\" WITH LOGIN PASSWORD '\{{password}}' VALID UNTIL '\{{expiration}}'; 
-    GRANT SELECT, INSERT, UPDATE ON payment_card TO \"\{{name}}\";" \
-    default_ttl="1h" \
-    max_ttl="24h"
-```
-
-The creation statement is a SQL statement that is executed when the credentials are generated. The `\{{name}}` and `\{{password}}` are template variables that are replaced with the actual username and password when the credentials are generated. The `\{{expiration}}` is another template variable that is replaced with the expiration time of the credentials.
-
-Let's also create a create a `reader` role that allows the user to select records from the `payments` table:
-
-```shell
-vault write database/roles/reader \
-    db_name=payments \
-    creation_statements="CREATE ROLE \"\{{name}}\" WITH LOGIN PASSWORD '\{{password}}' VALID UNTIL '\{{expiration}}'; 
-    GRANT SELECT ON payment_card TO \"\{{name}}\";" \
-    default_ttl="1h" \
-    max_ttl="24h"
-```
-
-## Generate Dynamic Credentials
-
-Finally you can generate dynamic credentials for the `writer` role. The credentials are valid for the duration specified in the role configuration. It is also possible to override the TTL when generating the credentials but you can only reduce the TTL, you cannot increase it.
-
-```shell
-vault read database/creds/writer
-```
-
-```shell
-Key                Value
----                -----
-lease_id           database/creds/writer/SS984TnCX78jOybQqmbfA0of
-lease_duration     1h
-lease_renewable    true
-password           bmuHZS30NsoV3-OUUSLr
-username           v-root-writer-79lX9T2hIoauvVJUOla7-1716724716
-```
-
-Now we have the setup done, let's see how we can integrate this into our spring boot application.
-
-Next execute the following query to select the records from the payments table:
-
-```shell
-select * from payment_card
-```
-
-You should see the record you just inserted, however, there is a small issue, the card number
-has been stored in plain text, this is a security risk and should be encrypted. We will address this in the next section.
-
-```shell
-payments-> ;
- id | user_id |        name         |  number  | expiry | cv3  
-----+---------+---------------------+----------+--------+------
-  1 |     123 | Mr Nicholas Jackson | 12313434 | 01/23  | 1231
-(1 rows)
-
-payments=> 
-```
-
-Now that you have database access configured, let's look at how we can transparently encrypt data
-in the database.
+Now that the datatabase engine is enabled let's configure it

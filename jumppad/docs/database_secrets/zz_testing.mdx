@@ -5,7 +5,7 @@ Now that everything is configured, let's run the application locally and see if 
 Run the following URL to start the application:
 
 ```shell
-./gradlew bootRun
+gradle bootRun
 ```
 
 All being well you will not see any errors and the spring boot application will start.
@@ -30,7 +30,13 @@ You should see the record ID returned in the response.
 
 Let's now check the data in the database to see if the record was inserted.
 
-First you need to get some access credentials, you can do this you can do this by running the following command:
+First you need to get some access credentials using the `reader` role 
+and you can use the `psql` command to query the database.
+
+
+<p>
+<details>
+  <summary style=\{{ fontSize: '18px', color: 'rgb(84, 128, 178)', fontWeight: 'medium' }} >Hint: commands</summary>
 
 ```shell
 vault read database/creds/reader
@@ -43,3 +49,28 @@ psql -h postgres.container.local.jmpd.in -U <username> payments
 ```
 
 When prompted enter your password.
+
+</details>
+</p>
+
+Once you have logged in, query the payments table to see the record you have just added.
+
+```shell
+psql (15.6 (Debian 15.6-0+deb12u1), server 15.4 (Debian 15.4-2.pgdg120+1))
+Type "help" for help.
+
+payments=> select * from payment_card;
+```
+
+What you should see is the record that you have just inserted, but, there is a problem
+the card number is stored in plain text.
+
+```shell
+payments=> select * from payment_card;
+ id | user_id |        name         |  number  | expiry | cv3  
+----+---------+---------------------+----------+--------+------
+  1 |     123 | Mr Nicholas Jackson | 12313434 | 01/23  | 1231
+(1 row)
+```
+
+Let's see how we can use Vault to change that.

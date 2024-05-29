@@ -1,0 +1,20 @@
+# Encrypting data
+
+Let's see how we can use this key to encrypt data. Run the following command to encrypt the
+credit card number. Note the `plaintext` parameter requires base64 encoded text.
+
+```shell
+vault write transit/encrypt/payments plaintext=$(base64 <<< "1234-5678-9012-3456")
+```
+
+The output will be a `ciphertext` value that you can store in your database.
+
+NOTE: The `ciphertext` value is probably going to be larger than the original credit card number, if
+you have a size limit on the column you may need to increase it.
+
+```
+Key            Value
+---            -----
+ciphertext     vault:v1:FjxqFe1w3SSzTTjl+o2rhwL+Ez8sJjmT7jRSbbLJhzErw2ZY9da0EkD0xbBMyY1Gi+Z7VLNkq2PzCqvojfqs5ypQv2qCCg/K8TFRGyOMIIVIBSRGyuFl/7YRh7w7YmLFTnMAczhNkIs10drAiDTxOif1COMyKFNu9WmCSGezKrrq7XX2qRB+fIyMecerPMfBakXD53nU4oQYNYRQ8IfizQwvCRelhlO6LiwfjHM3CjIJVgJaBK8xp/Og1yraMNRgyN4TkBhcid8rTdK+EYEY6Q7nx/G6zLbNu6UOkgD7GsPnSH/zdD8ksNkuw7QlTEqSSaLNbDLihM/mOxcp7KAGVH/FEr6p4Wy6OvlLc0R/t4ksv4PElb9L0YpVgZdPaCMIaqGFj0TfW8IS5yCIhwqDuUPBjNY+/UuDJEDzjWa1UkFGWV/GesMECqlPRwkHlWtzG0R0s41hksveUrzfzrupQUba7yLsHegiL1hUM33YPAzozBstJsvSg9T3Rz9+UsOrz2eCzRlq/laS030bhOO7JJs8NpPIwf0O8PeKBBQIjCCwE0ZB+Dr7Nrk9s2ZjKLApbjSnnwIyALTkddrEq8u5w/F2To4mKfJSjMLMYeMaWiqj1wKyErqYVqnVg4esAARFKF/FVHpNbgCdkj4Q9EsBGDd7LqKgGwtjMBzOQk/wcxg=
+key_version    1
+```

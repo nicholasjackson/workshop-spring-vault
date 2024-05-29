@@ -1,0 +1,42 @@
+# Configuring the Database Connection
+
+Once an engine has been enabled at a given path, you can configure it. The configuration options will vary depending on the type of secrets engine. The database secrets engine requires connection information to the database.
+
+There are many different databases that are supported by Vault [database secrets engine](https://www.vaultproject.io/docs/secrets/databases/index.html). When configuring the database secrets engine, you need to specify the plugin name, the connection URL, and the allowed roles.
+
+We will configure the database secrets engine for a PostgreSQL database. The connection URL should be in the format:
+ 
+```
+postgresql://\{{username}}:\{{password}}@hostname:port/database_name?sslmode=disable
+```
+
+`username` and `password` are template variables, the actual username and password are passed as parameters.
+
+
+### Run the following command in the terminal to configure the database connection:
+
+```shell
+vault write database/config/payments \
+    plugin_name=postgresql-database-plugin \
+    allowed_roles=writer,reader \
+    connection_url="postgresql://\{{username}}:\{{password}}@{{db_address}}:5432/payments?sslmode=disable" \
+    username="postgres" \
+    password="password"
+```
+
+## Rotating the Root Database Credentials
+
+Once you have configured the username and password in Vault it is not possible to read this configuration and retrieve them, 
+they are only used internally when generating dynamic credentials. 
+However, to configure Vault we had to provide the root database credentials. Regardless of how you obtained these credentisls, 
+it is a good practice to rotate them to ensure that they do not leak. Vault can automatically rotate the credentials for you 
+without you needing to configure the secrets engine again.
+
+### Run the following command in the terminal to rotate the root credentials:
+
+```shell
+vault write -force database/rotate-root/payments
+```
+
+Now the Vault has been configured with the database details, let's see how you can create roles
+that grant specific permissions.

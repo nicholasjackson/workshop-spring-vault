@@ -2,7 +2,19 @@ variable "network" {
   default = ""
 }
 
+variable "vscode" {
+  default = ""
+}
+
 variable "db_address" {
+  default = ""
+}
+
+variable "vault_token" {
+  default = ""
+}
+
+variable "vault_addr" {
   default = ""
 }
 

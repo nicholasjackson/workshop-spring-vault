@@ -1,0 +1,20 @@
+# Creating encryption keys
+
+To encrypt and decrypt data using the Transit Secrets Engine, you need to create 
+an encryption key. You can create multiple keys for different purposes.
+There are also many different types of keys that you can create, such as
+AES, RSA, and ECDSA.
+
+Since the keys are managed by Vault it is generally a good idea to create a new key
+for each application that needs to encrypt data. This way you can easily rotate the key
+without affecting other applications. The keys are securely stored inside of Vault
+and unless you explicitly state that you would like to export the key, it is not possible
+to retrieve the key.
+
+### Run the following command to create a new RSA 4096 encryption key:
+
+```shell
+vault write -f transit/keys/payments type=rsa-4096
+```
+
+Next let's see how you can use Vault to encrypt data.

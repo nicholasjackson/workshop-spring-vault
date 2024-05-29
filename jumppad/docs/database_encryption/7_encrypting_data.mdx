@@ -1,0 +1,68 @@
+# Encrypting data on save
+
+Now let's add a method that will encrypt the card number before saving it to the database. 
+
+The VaultTemplate class provides a method called `opsForTransit` that allows you to interact with the Transit Secrets Engine. You can use this method to encrypt and decrypt data. The method requires a single parameter that is the path to the Transit Secrets Engine. The reason you need to specify the path is that Vault allows you to multiple Transit Secrets Engines
+mounted at different paths.
+
+```java
+VaultTransitOperations transitOperations = vault.opsForTransit("transit");
+```
+
+Once you have an instance of the `VaultTransitOperations` class you can use the `encrypt` method to encrypt the data. The `encrypt` method requires two parameters, the first is the name of the encryption key and the second is the plaintext data that you want to encrypt.
+
+```java
+Ciphertext ciphertext = transitOperations.encrypt("payments", Plaintext.of(ref.getNumber()));
+```
+
+Finally, you can set the encrypted data on the entity before saving it to the database.
+
+```java
+ref.setNumber(ciphertext.getCiphertext());
+```
+
+The full method should look like this:
+
+```java
+@PrePersist
+@PreUpdate
+public void encryptDataBeforeSave(final PaymentCard ref) {
+  // encrypt the card number
+  VaultTransitOperations transitOperations = vault.opsForTransit("transit");
+  Ciphertext ciphertext = transitOperations.encrypt("payments", Plaintext.of(ref.getNumber()));
+
+  ref.setNumber(ciphertext.getCiphertext());
+}
+```
+
+### Add this to your class and we can then wire this up to the entity.
+
+<p>
+<details>
+  <summary style=\{{ fontSize: '18px', color: 'rgb(84, 128, 178)', fontWeight: 'medium' }} >Solution: src/main/java/com/example/springvault/entity/PaymentCardListener.java</summary>
+
+```java
+package com.example.springvault.entity;
+
+public class PaymentCardListener {
+
+  @Autowired
+  private VaultTemplate vault;
+
+  @PrePersist
+  @PreUpdate
+  public void encryptDataBeforeSave(final PaymentCard ref) {
+    // encrypt the card number
+    VaultTransitOperations transitOperations = vault.opsForTransit("transit");
+    Ciphertext ciphertext = transitOperations.encrypt("payments", Plaintext.of(ref.getNumber()));
+
+    ref.setNumber(ciphertext.getCiphertext());
+  }
+}
+```
+
+</details>
+</p>
+
+The final step is to wire up the listener to the entity so that the code is executed
+before the entity is persisted to the database.

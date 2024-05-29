@@ -1,0 +1,3 @@
+set -e
+
+vault read sys/mounts | grep database
