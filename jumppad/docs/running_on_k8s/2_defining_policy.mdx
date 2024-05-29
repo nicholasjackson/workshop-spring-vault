@@ -1,0 +1,44 @@
+# Controlling access to Vault using Policy
+
+Policies are used to control access to Vault.  A policy is a HCL file that defines
+the paths that a token can access and the operations that can be performed on those
+paths.  For example the following policy allows access to create a dynamic 
+database credential using the `writer` role and to encrypt data using the transit engine.
+
+```javascript
+path "database/creds/writer" {
+  capabilities = ["read", "create"]
+}
+
+path "transit/encrypt/payments" {
+  capabilities = ["create"]
+}
+```
+
+Let's add this policy to the Vault server. The Vault CLI took has a command called 
+`vault policy` this allows you to read / write and list policy.
+
+### Using the `vault policy` command write the above policy to a policy called `payments`
+
+Did you figure it out? If not the solution is below.
+
+<p>
+<details>
+  <summary style=\{{ fontSize: '18px', color: 'rgb(84, 128, 178)', fontWeight: 'medium' }} >Solution: command</summary>
+
+```bash
+vault policy write payments - <<EOF
+path "database/creds/writer" {
+  capabilities = ["read", "create"]
+}
+
+path "transit/encrypt/payments" {
+  capabilities = ["create"]
+}
+EOF
+```
+</details>
+</p>
+
+Now let's see how you link this policy to a Kubernetes service account with a 
+role.

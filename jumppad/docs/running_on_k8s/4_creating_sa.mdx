@@ -1,0 +1,19 @@
+# Defining a Kuberentes service account
+
+Now Vault has been configured you need to create a Kubernetes deployment that
+will run your application.
+
+The first step is to create a service account for the application.  This service
+account will be used to authenticate to Vault.
+
+### Add the following to the file `./k8s/app.yaml':
+
+```yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: payments
+automountServiceAccountToken: false
+```
+
+Next let's define a service so we can access our application.

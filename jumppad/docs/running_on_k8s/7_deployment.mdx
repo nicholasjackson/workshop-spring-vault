@@ -1,0 +1,49 @@
+#  Adding the deployment
+
+Finally you need to add the deployment that will run the application.
+This deployment is pretty standard. It adds the service account that you
+created earlier and mounts the application configuration as a volume.
+
+When the application starts it will read the configuration from the
+`application.yml` file that is mounted as a volume.  Spring will then attempt
+to load the service account token that it expects to be mounted at 
+`/var/run/secrets/kubernetes.io/serviceaccount/token`.  It uses this token
+along with the role to authenticate with Vault and return a token that can
+be used to access the secrets.
+
+### Add the following to the file `./k8s/app.yaml':
+
+```yaml
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: payments
+  name: payments 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: payments
+  template:
+    metadata:
+      labels:
+        app: payments
+    spec:
+      serviceAccountName: payments 
+      automountServiceAccountToken: true
+      containers:
+        - image: nicholasjackson/spring-vault-example:v0.0.3
+          name: payments
+          volumeMounts:
+            - name: config-volume
+              mountPath: /config
+      volumes:
+        - name: config-volume
+          configMap:
+            name: payments-config
+```
+
+With everything in place you can now deploy the application to Kubernetes.

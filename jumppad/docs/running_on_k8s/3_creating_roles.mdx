@@ -1,0 +1,20 @@
+# Creating Roles to associate policies with Kubernetes service accounts 
+
+Once you have defined the policies that you want to use you need to create a role
+that associates the policy with a Kubernetes service account.  The following command
+creates a role called `payments` that associates the `payments` policy with the
+`payments` service account in the `default` namespace.
+
+### Run the following command
+
+```bash
+vault write auth/kubernetes/role/payments \
+  bound_service_account_names=payments-auth \
+  bound_service_account_namespaces=default \
+  token_policies=runtime
+  ttl=24h
+```
+
+Now everything has been configured, let's create a new Kubernetes deployment
+that uses the `payments` service account to authenticate to Vault and runs
+the application.

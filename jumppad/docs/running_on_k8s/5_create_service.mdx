@@ -1,0 +1,23 @@
+# Defining a service
+
+Next you need to define a service that will be used to access the application.
+
+### Add the following to the file `./k8s/app.yaml':
+
+```yaml
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: payments
+spec:
+  selector:
+    app: payments
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+```
+
+Next let's see how we can define an application.yaml that works with kubenetes
+authentication.
