@@ -1,0 +1,52 @@
+# Adding a new controller
+
+Let's now add a new controller to see how you can use static secrets.
+
+Create a new Spring controller that handles a `GET` request at the path `/secret`.
+The controller should return the secret `password` from the static secret that you 
+just configured.
+
+If you remember from the intro you can automatically inject secrets to properties
+using the following convention.
+
+```java
+@Value("${key name}")
+String password;
+```
+
+### Create the controller that returns the static secret `password`
+
+If you need any help the solution is below.
+
+<p>
+<details>
+  <summary style=\{{ fontSize: '18px', color: 'rgb(84, 128, 178)', fontWeight: 'medium' }} >Solution: controller</summary>
+
+```java
+package com.example.springvault.controllers;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class SecretController {
+
+  private static final Logger log = LoggerFactory.getLogger(PaymentCardController.class);
+
+  @Value("${password}")
+  String password;
+
+  @GetMapping("/secret")
+  public String secret() {
+    return "My password is: " + password;
+  }
+}
+```
+
+</details>
+</p>
+
+Let's now test the application.

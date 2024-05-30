@@ -7,6 +7,8 @@ logging:
           core:
             env: DEBUG
 spring:
+  application:
+    name: SpringVaultApplication
   jpa:
     show_sql: true
     hibernate:
@@ -25,7 +27,7 @@ spring.cloud.vault:
   authentication: TOKEN
   token: ${VAULT_TOKEN}
   kv:
-    enabled: false
+    enabled: true
   database:
     enabled: true
     role: writer

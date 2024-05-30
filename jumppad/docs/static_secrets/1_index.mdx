@@ -1,0 +1,60 @@
+# Static secrets
+
+Another of Vault and Spring boots capabilities is to enable the automatic
+injection of secrets as a property.
+
+When configured, upon startup Spring will attempt to retrieve secrets from the following
+paths:
+
+```shell
+/secret/{application}/{profile}
+/secret/{application}
+/secret/{defaultContext}/{profile}
+/secret/{defaultContext}
+```
+
+The secrets that are stored at that path are automatically read by Spring
+and can then be injected using the following convention.
+
+```java
+@Value("${key name}")
+String password;
+```
+
+i.e given a secret exists with the key `password`, you could define the following.
+
+```java
+@Value("${password}")
+String password;
+```
+
+## Enabling the Vault secrets engine
+
+Before you can use the secrets engine you must first mount it, you can find 
+the details on how to do this at the following location.
+
+https://developer.hashicorp.com/vault/docs/secrets/kv/kv-v2
+
+**HINT** You need to enable the engine at the path `secret` this requires a
+specific parameter
+
+### Enable the kv2 engine at the path `secret`
+
+Did that work? If not you can find the soloution below.
+
+<p>
+<details>
+  <summary style=\{{ fontSize: '18px', color: 'rgb(84, 128, 178)', fontWeight: 'medium' }} >Solution: enabling secrets</summary>
+
+
+```shell
+vault write database/roles/reader \
+    db_name=payments \
+    creation_statements="CREATE ROLE \"\{{name}}\" WITH LOGIN PASSWORD '\{{password}}' VALID UNTIL '\{{expiration}}'; 
+    GRANT SELECT ON payment_card TO \"\{{name}}\";" \
+    default_ttl="1h" \
+    max_ttl="24h"
+```
+
+</details>
+</p>

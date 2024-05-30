@@ -41,15 +41,10 @@ Did that work? If not you can find the soloution below.
 
 
 ```shell
-vault write database/roles/reader \
-    db_name=payments \
-    creation_statements="CREATE ROLE \"\{{name}}\" WITH LOGIN PASSWORD '\{{password}}' VALID UNTIL '\{{expiration}}'; 
-    GRANT SELECT ON payment_card TO \"\{{name}}\";" \
-    default_ttl="1h" \
-    max_ttl="24h"
+vault secrets enable -version=2 -path=secret kv
 ```
 
 </details>
 </p>
 
-Let's now generate some credentials and log into the database.
+Let's now create a secret for the application to use

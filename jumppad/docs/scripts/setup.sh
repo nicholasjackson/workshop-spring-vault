@@ -60,8 +60,12 @@ path "database/creds/writer" {
 }
 
 path "transit/encrypt/payments" {
-  capabilities = ["create","update"]
+  capabilities = ["update"]
 }
 EOF
 
 ## copy the deployment file
+
+## confgiure static secrets
+vault secrets enable -version=2 -path=secret kv
+vault kv put secret/SpringVaultApplication password=H@rdT0Gu3ss

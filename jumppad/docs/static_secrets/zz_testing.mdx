@@ -1,0 +1,33 @@
+# Testing the application
+
+Now that everything is configured, let's run the application locally and see if it can connect to the database.
+
+Run the following URL to start the application:
+
+```shell
+gradle bootRun
+```
+
+All being well you will not see any errors and the spring boot application will start.
+Let's test the application by inserting a record into the `payments` table.
+
+Run the following command in the terminal:
+
+```shell 
+curl localhost:8080/secret
+```
+
+You should see the value of the Vault secret returned.
+
+## Summary
+This brings us to the end of the workshop, there are many other features in Vault,
+if you have a little time, why not try to modify the applicatoin and add some
+of the additional features.
+
+### Ideas
+* Hash some data
+* HMAC a value
+* Learn how to version kv secrets
+* Generate x509 certificates
+* Implement custom revocation statements for database secrets
+

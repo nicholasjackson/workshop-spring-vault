@@ -1,0 +1,54 @@
+# Configuring Spring
+
+As you learned at the begining of this section, Spring will attempt to load
+secrets from certain default paths. One of those paths is the application name
+the secret for which you created in the previous step.
+
+Let's ensure that the spring application has been configured with the correct name.
+
+## Set the application name in the Spring config to `SpringVaultApplication`
+
+Manage that? If not the solution is below.
+
+<p>
+<details>
+  <summary style=\{{ fontSize: '18px', color: 'rgb(84, 128, 178)', fontWeight: 'medium' }} >Solution: application name</summary>
+
+```yaml
+spring:
+  application:
+    name: SpringVaultApplication
+```
+
+</details>
+</p>
+
+## Enabling the kv settings
+
+If you look at the configuration you will see that the kv is currently disabled
+
+```yaml
+  kv:
+    enabled: false
+```
+
+To inject secrets you need to set this value to `true` so that Spring will attempt
+to read the static secret at startup time.
+
+### Set the enabled property to `true`
+
+If you need a hint you can find the solution below.
+
+<p>
+<details>
+  <summary style=\{{ fontSize: '18px', color: 'rgb(84, 128, 178)', fontWeight: 'medium' }} >Solution: enabling secrets</summary>
+
+```yaml
+  kv:
+    enabled: false
+```
+
+</details>
+</p>
+
+Let's now create a new controller to see how you can use these secrets.
