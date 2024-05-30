@@ -9,9 +9,9 @@ creates a role called `payments` that associates the `payments` policy with the
 
 ```bash
 vault write auth/kubernetes/role/payments \
-  bound_service_account_names=payments-auth \
+  bound_service_account_names=payments \
   bound_service_account_namespaces=default \
-  token_policies=runtime
+  token_policies=payments
   ttl=24h
 ```
 

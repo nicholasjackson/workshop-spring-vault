@@ -2,7 +2,7 @@
 
 Let's deploy your application to Kubernetes.
 
-Run the following command in your termainal to deploy the application:
+### Run the following command in your termainal to deploy the application:
 
 ```bash
 kubectl apply -f ./k8s/app.yaml
@@ -23,7 +23,7 @@ payments-5b859f9556-4wz78               1/1     Running   0          111m
 Let's test that the application is working correctly by submitting a new payment card.
 
 ```shell
-curl localhost:8081/paymentcard  -H "content-type: application/json" \
+curl {{vault_addr}}:8081/paymentcard  -H "content-type: application/json" \
   -d '{
         "user_id": 123, 
         "name": "Mr Nicholas Jackson", 

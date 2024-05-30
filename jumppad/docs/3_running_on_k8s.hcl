@@ -36,6 +36,10 @@ resource "chapter" "running_on_k8s" {
   }
 
   page "testing" {
-    content = template_file("./running_on_k8s/zz_testing.mdx", { db_address = variable.db_address })
+    content = template_file("./running_on_k8s/zz_testing.mdx", {
+      db_address  = variable.db_address,
+      vault_addr  = variable.vault_addr,
+      vault_token = variable.vault_token
+    })
   }
 }
