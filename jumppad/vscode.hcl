@@ -50,48 +50,6 @@ resource "template" "vscode_jumppad" {
   destination = "${data("vscode")}/workspace.json"
 }
 
-resource "template" "boot_config" {
-  source = <<-EOF
-  logging:
-    level:
-      root: INFO
-      org:
-        springframework:
-          vault:
-            core:
-              env: DEBUG
-  spring:
-    jpa:
-      show_sql: true
-      hibernate:
-        ddl-auto: none
-      properties:
-        hibernate:
-          dialect: org.hibernate.dialect.PostgreSQLDialect
-    datasource:
-      driverClassName: org.postgresql.Driver
-      url: jdbc:postgresql://postgres.container.local.jmpd.in:5432/payments
-  spring.cloud.vault:
-    host: ${docker_ip()}
-    scheme: http
-    port: 8200
-    fail-fast: true
-    authentication: TOKEN
-    token: ${resource.exec.vault_init.output.vault_token}
-    kv:
-      enabled: false
-    database:
-      enabled: true
-      role: writer
-      backend: database
-      username-property: spring.datasource.username
-      password-property: spring.datasource.password
-  spring.config.import: vault://
-  EOF
-
-  destination = "${data("vscode")}/application.yaml"
-}
-
 resource "container" "vscode" {
 
   network {
@@ -105,11 +63,6 @@ resource "container" "vscode" {
   volume {
     source      = "./working"
     destination = "/usr/src"
-  }
-
-  volume {
-    source      = resource.template.boot_config.destination
-    destination = "/usr/src/src/main/resources/application.yaml"
   }
 
   volume {

@@ -11,7 +11,6 @@ import jakarta.persistence.Id;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-@EntityListeners(PaymentCardListener.class)
 @Entity
 public class PaymentCard implements Serializable {
 

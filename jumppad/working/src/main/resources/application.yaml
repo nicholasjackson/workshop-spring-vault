@@ -1,0 +1,19 @@
+  logging:
+    level:
+      root: INFO
+      org:
+        springframework:
+          vault:
+            core:
+              env: DEBUG
+  spring:
+    jpa:
+      show_sql: true
+      hibernate:
+        ddl-auto: none
+      properties:
+        hibernate:
+          dialect: org.hibernate.dialect.PostgreSQLDialect
+    datasource:
+      driverClassName: org.postgresql.Driver
+      url: jdbc:postgresql://postgres.container.local.jmpd.in:5432/payments
